@@ -1,0 +1,93 @@
+### M-Pesa Daraja API – local testing
+### 1) pnpm run dev  2) pnpm run ngrok (or ngrok http 3000)  3) Set MPESA_CALLBACK_URL in .env to https://YOUR_SUBDOMAIN.ngrok-free.app/api/payments/callback
+
+@baseUrl = http://localhost:3000
+### Optional: use ngrok URL to hit your app via the tunnel (e.g. after "ngrok http 3000")
+# @baseUrl = https://YOUR_SUBDOMAIN.ngrok-free.app
+@paymentId = 
+@checkoutRequestId = 
+
+### 0. Root (API info)
+GET {{baseUrl}}/
+
+### 1. Health check (liveness)
+GET {{baseUrl}}/health
+
+### 2. Readiness (Daraja credentials check)
+GET {{baseUrl}}/health/ready
+
+### 3. Validation URL (for Daraja C2B registration)
+GET {{baseUrl}}/api/payments/validation
+
+### 4. Initiate STK Push (Lipa na M-Pesa)
+### Replace phone_number with 254XXXXXXXXX; amount 1–70000 KES
+POST {{baseUrl}}/api/payments
+Content-Type: application/json
+
+{
+  "phone_number": "254712345678",
+  "amount": 10,
+  "account_reference": "ORDER-001",
+  "transaction_description": "Test payment"
+}
+
+### 5. Query STK Push status
+### Set @checkoutRequestId above from the STK Push response (CheckoutRequestID)
+POST {{baseUrl}}/api/payments/query
+Content-Type: application/json
+
+{
+  "checkoutRequestId": "{{checkoutRequestId}}"
+}
+
+### 6. List all payments
+GET {{baseUrl}}/api/payments
+
+### 7. List payments with pagination
+GET {{baseUrl}}/api/payments?page=1&perPage=10
+
+### 8. List payments by status (PENDING | PROCESSING | COMPLETED | FAILED)
+GET {{baseUrl}}/api/payments?status=COMPLETED
+
+### 9. Get single payment by ID
+### Set @paymentId above from create or list response
+GET {{baseUrl}}/api/payments/{{paymentId}}
+
+### 10. Simulate Daraja callback (success)
+### Safaricom calls this URL; for a real update, use MerchantRequestID/CheckoutRequestID from a prior STK Push response
+POST {{baseUrl}}/api/payments/callback
+Content-Type: application/json
+
+{
+  "Body": {
+    "stkCallback": {
+      "MerchantRequestID": "test-merchant-id",
+      "CheckoutRequestID": "test-checkout-id",
+      "ResultCode": 0,
+      "ResultDesc": "The service request is processed successfully.",
+      "CallbackMetadata": {
+        "Item": [
+          { "Name": "Amount", "Value": 10 },
+          { "Name": "MpesaReceiptNumber", "Value": "QGH12345" },
+          { "Name": "TransactionDate", "Value": 20250203120000 },
+          { "Name": "PhoneNumber", "Value": 254712345678 }
+        ]
+      }
+    }
+  }
+}
+
+### 11. Simulate Daraja callback (user cancelled)
+POST {{baseUrl}}/api/payments/callback
+Content-Type: application/json
+
+{
+  "Body": {
+    "stkCallback": {
+      "MerchantRequestID": "test-merchant-id-2",
+      "CheckoutRequestID": "test-checkout-id-2",
+      "ResultCode": 1032,
+      "ResultDesc": "Request cancelled by user."
+    }
+  }
+}
