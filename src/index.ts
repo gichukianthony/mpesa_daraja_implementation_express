@@ -1,7 +1,5 @@
-// import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
-// import { config } from './config';
 import { requestLogger } from './middleware/requestLogger';
 import { paymentRouter } from './routes/payment.routes';
 import { baseUrl, env } from './config/env';
@@ -38,7 +36,7 @@ app.get('/health', (_req, res) => {
 // Readiness: checks Daraja credentials by requesting an access token
 app.get('/health/ready', async (_req, res) => {
   try {
-    const authUrl = `${baseUrl}/oauth/v1/generate?grant_type=client_credentials`;
+    const authUrl = `${baseUrl()}/oauth/v1/generate?grant_type=client_credentials`;
     const credentials = Buffer.from(
       `${env.MPESA_CONSUMER_KEY}:${env.MPESA_CONSUMER_SECRET}`
     ).toString('base64');

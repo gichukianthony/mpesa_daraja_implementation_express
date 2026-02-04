@@ -8,8 +8,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "ngrok": "ngrok http 3000",
-    "env:check": "node scripts/check-env.js"
+    "ngrok": "ngrok http 3000"
   },
   "keywords": [
     "mpesa",

@@ -15,7 +15,7 @@ paymentRouter.post('/', async (req: Request, res: Response): Promise<void> => {
       amount: req.body.amount != null ? Number(req.body.amount) : undefined,
     });
     if (!parsed.success) {
-      const msg = parsed.error.errors.map((e) => e.message).join('; ');
+      const msg = parsed.error.issues.map((e) => e.message).join('; ');
       res.status(400).json({ success: false, error: msg });
       return;
     }
@@ -34,7 +34,7 @@ paymentRouter.post('/query', async (req: Request, res: Response): Promise<void> 
   try {
     const parsed = queryPaymentStatusSchema.safeParse(req.body);
     if (!parsed.success) {
-      const msg = parsed.error.errors.map((e) => e.message).join('; ');
+      const msg = parsed.error.issues.map((e) => e.message).join('; ');
       res.status(400).json({ success: false, error: msg });
       return;
     }
