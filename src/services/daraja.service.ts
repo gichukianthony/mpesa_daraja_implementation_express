@@ -1,4 +1,4 @@
-import { config } from '../config';
+import { env, baseUrl } from "../config/env";
 
 interface FetchResponse {
   ok: boolean;
@@ -10,15 +10,15 @@ interface FetchResponse {
 export class DarajaService {
   private accessToken: string | null = null;
   private tokenExpiry: Date | null = null;
-  private readonly baseUrl = config.baseUrl;
-  private readonly consumerKey = config.mpesa.consumerKey;
-  private readonly consumerSecret = config.mpesa.consumerSecret;
-  private readonly passKey = config.mpesa.passKey;
-  private readonly shortCode = config.mpesa.shortCode;
-  private readonly callBackUrl = config.mpesa.callbackUrl;
+  private readonly baseUrl = baseUrl();
+  private readonly consumerKey = env.MPESA_CONSUMER_KEY;
+  private readonly consumerSecret = env.MPESA_CONSUMER_SECRET;
+  private readonly passKey = env.MPESA_PASS_KEY;
+  private readonly shortCode = env.MPESA_SHORT_CODE;
+  private readonly callBackUrl = env.MPESA_CALLBACK_URL;
 
   constructor() {
-    console.log(`[Daraja] Initialized in ${config.mpesa.environment} mode`);
+    console.log(`[Daraja] Initialized in ${env.MPESA_ENVIRONMENT} mode`);
   }
 
   private async getAccessToken(): Promise<string> {

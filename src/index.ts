@@ -1,9 +1,8 @@
-import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
-import { config } from './config';
 import { requestLogger } from './middleware/requestLogger';
 import { paymentRouter } from './routes/payment.routes';
+import { baseUrl, env } from './config/env';
 
 const app = express();
 
@@ -33,12 +32,13 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'mpesa-daraja' });
 });
 
+
 // Readiness: checks Daraja credentials by requesting an access token
 app.get('/health/ready', async (_req, res) => {
   try {
-    const authUrl = `${config.baseUrl}/oauth/v1/generate?grant_type=client_credentials`;
+    const authUrl = `${baseUrl()}/oauth/v1/generate?grant_type=client_credentials`;
     const credentials = Buffer.from(
-      `${config.mpesa.consumerKey}:${config.mpesa.consumerSecret}`
+      `${env.MPESA_CONSUMER_KEY}:${env.MPESA_CONSUMER_SECRET}`
     ).toString('base64');
     const r = await fetch(authUrl, {
       method: 'GET',
@@ -79,7 +79,7 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
   res.status(500).json({ success: false, error: 'Internal server error' });
 });
 
-app.listen(config.port, () => {
-  console.log(`[Server] M-Pesa Daraja API running at http://localhost:${config.port}`);
-  console.log(`[Server] Environment: ${config.mpesa.environment}`);
+app.listen(env.PORT, () => {
+  console.log(`[Server] M-Pesa Daraja API running at http://localhost:${env.PORT}`);
+  console.log(`[Server] Environment: ${env.MPESA_ENVIRONMENT}`);
 });

@@ -6,12 +6,14 @@ export const createPaymentSchema = z.object({
   phone_number: z
     .string()
     .min(1, 'phone_number is required')
-    .regex(phoneRegex, 'Invalid phone number. Use 254XXXXXXXXX or 07XXXXXXXX'),
+    .refine((val) => phoneRegex.test(val), {
+      message: 'Invalid phone number. Use 254XXXXXXXXX or 07XXXXXXXX',
+    }),
   amount: z
-    .number({ invalid_type_error: 'amount must be a number' })
-    .int('amount must be a whole number')
-    .min(1, 'amount must be at least 1 KES')
-    .max(70000, 'amount must be at most 70,000 KES'),
+    .number()
+    .refine((val) => Number.isInteger(val), { message: 'amount must be a whole number' })
+    .min(1, { message: 'amount must be at least 1 KES' })
+    .max(70000, { message: 'amount must be at most 70,000 KES' }),
   account_reference: z
     .string()
     .min(1, 'account_reference is required')
@@ -19,6 +21,7 @@ export const createPaymentSchema = z.object({
   transaction_description: z
     .string()
     .min(1, 'transaction_description is required')
+    .max(13, 'transaction_description is required')
     .max(13, 'transaction_description max 13 characters'),
   notes: z.string().max(500).optional(),
 });
