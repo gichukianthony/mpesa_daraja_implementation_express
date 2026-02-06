@@ -90,7 +90,7 @@ curl -X POST http://localhost:3000/api/payments \
     "phone_number": "254712345678",
     "amount": 10,
     "account_reference": "ORDER-001",
-    "transaction_description": "Payment for order"
+    "transaction_description": "Payment Order"
   }'
 ```
 
