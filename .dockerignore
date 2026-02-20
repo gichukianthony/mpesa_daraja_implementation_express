@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+build
+*.js.map # optional, if source maps are generated
+
+# Environment files
+.env
+.env.development
+.env.production
+.env.local
+.aws/ # sensitive cloud credentials
+
+# Version control
+.git
+.gitignore
+.github
+
+# Development files
+.vscode
+*.log
+coverage
+npm-debug.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+docs/
+
+# other
+Dockerfile
